@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+  background-color: grey;
   margin: 0;
   padding: 0;
 }
@@ -13,6 +13,19 @@ h1 {
 .options {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 26px;
+}
+
+.image {
+  text-align: center;
+  margin: 20px;
+  font-size: 40px;
+}
+
+.live {
+  text-align: center;
+  margin: 20px;
+  font-size: 40px;
 }
 
 .options button {
@@ -24,6 +37,10 @@ h1 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.game-info {
+  background-color: lightblue;
 }
 
 .options button:hover {
@@ -40,18 +57,12 @@ h1 {
   height: 60px;
   border: 5px solid #ddd;
   cursor: pointer;
-}
-
-.cell.marked {
-  background-color: #ffc107;
+  text-align: center;
+  background-color: #3ea2e0
 }
 
 .cell:hover {
   background-color: #f0f0f0;
-}
-
-.cell:active {
-  background-color: #dcdcdc;
 }
 
 .game-info {

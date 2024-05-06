@@ -1,5 +1,22 @@
 'use strict'
 
+function placeMinesRandomly(board, firstClickRow, firstClickCol) {
+    // const size = board.length
+    const totalMines = LEVELS[gSelectedLevel].MINES
+    var randomCell = LEVELS[gSelectedLevel].SIZE - 1
+    let minesPlaced = 0
+    while (minesPlaced < totalMines) {
+        const randomRow = getRandomIntInclusive(0,randomCell)
+        const randomCol = getRandomIntInclusive(0,randomCell)
+        if (!board[randomRow][randomCol].isMine &&
+            !(randomRow >= firstClickRow - 1 && randomRow <= firstClickRow + 1 &&
+                randomCol >= firstClickCol - 1 && randomCol <= firstClickCol + 1)) {
+            board[randomRow][randomCol].isMine = true
+            minesPlaced++
+        }
+    }
+}
+
 function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -27,6 +44,12 @@ function countNeighborMines(board, row, col) {
             }
         }
     }
-    // console.log(count)
     return count
 }
+
+// function shuffle(array) {
+//     for (let i = array.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1))
+//         [array[i], array[j]] = [array[j], array[i]]
+//     }
+// }
