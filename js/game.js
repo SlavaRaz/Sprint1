@@ -5,7 +5,9 @@ const FLAG = '🚩'
 const GAME = '😀'
 const LOSE = '😒'
 const WIN = '😎'
-const LIVE = '❤️'
+const LIVE_3 = '❤️❤️❤️'
+const LIVE_2 = '❤️❤️'
+const LIVE_1 = '❤️'
 const LEVELS = {
     Beginner: { SIZE: 4, MINES: 2 },
     Medium: { SIZE: 8, MINES: 14 },
@@ -17,6 +19,10 @@ var isWin = false
 var gBoard
 var gGame
 var gSelectedLevel = 'Beginner'
+var leftLives = 3
+// var gStartTime
+var gIntervalId
+var gElapsedTime = 0
 
 // init game 
 function onInit() {
@@ -26,10 +32,16 @@ function onInit() {
         markedCount: 0,
         secsPassed: 0
     }
-    getSmile()
-    getLive()
+    clearInterval(gIntervalId)
+    isFirstClick = true
+    const elSmile = document.getElementById('smile')
+    elSmile.innerHTML = GAME
+    const elLive = document.getElementById('live')
+    elLive.innerHTML = LIVE_3
     document.getElementById('shown-count').innerHTML = gGame.shownCount
     document.getElementById('marked-count').innerHTML = gGame.markedCount
+    document.getElementById('timer').innerHTML = gGame.secsPassed
+
     gBoard = buildBoard(LEVELS[gSelectedLevel])
     renderBoard()
     //***  if first click  ***/
@@ -46,12 +58,17 @@ function selectLevel(level) {
     gSelectedLevel = level
     onInit()
 }
-// func to check the first click on cell, should be a mine //
+// func to check the first click on cell, should not be a mine //
 function firstClick(i, j) {
-    isFirstClick = false
-    renderBoard()
+
+    // gBoard[1][1].isMine = true
+    // gBoard[3][3].isMine = true
     placeMinesRandomly(gBoard, i, j)
+    renderBoard()
     setMinesNegsCount(gBoard)
+    isFirstClick = !isFirstClick
+    console.log(isFirstClick)
+    return
 }
 // build board //
 function buildBoard(gLevel) {
@@ -70,9 +87,10 @@ function buildBoard(gLevel) {
     }
     //*** random mine placed ***/
     // placeMinesRandomly(board)
-    board[1][1].isMine = true
-    board[3][3].isMine = true
-    setMinesNegsCount(board)
+    //*** manually mine placed ***/
+    // board[1][1].isMine = true
+    // board[3][3].isMine = true
+    // setMinesNegsCount(board)
     return board
 }
 // render board //
@@ -97,13 +115,18 @@ function renderBoard() {
 }
 // handlie click on each cell //
 function onCellClicked(elCell, i, j) {
-    //**** if firt click on cell ****//
-    // if (isFirstClick) {
-    //     firstClick(i, j)
-    // }
+
+    if (isFirstClick) {
+        gGame.secsPassed = Date.now()
+        startTimer()
+        firstClick(i, j)
+    }
     const cell = gBoard[i][j]
     if (gGame.isOn) {
-        if (cell.isMine && !cell.isMarked) gameOver(i, j)
+        if (cell.isMine && !cell.isMarked) {
+            leftLives--
+            gameOver(i, j)
+        }
         else {
             if (!cell.isShown && !cell.isMarked) {
                 cell.isShown = true
@@ -149,6 +172,7 @@ function checkGameOver() {
         console.log('You win!')
         isWin = true
         getSmile()
+        clearInterval(gIntervalId)
         return true
     } else return false
 }
@@ -162,7 +186,12 @@ function renderCell(i, j, value) {
 function gameOver(row, col) {
 
     var clickedMinePos = { row, col }
-    gGame.isOn = false
+    if (leftLives === 0) {
+        gGame.isOn = false
+        renderLive()
+        getSmile()
+        clearInterval(gIntervalId)
+    }
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++) {
             const cell = gBoard[i][j]
@@ -170,26 +199,43 @@ function gameOver(row, col) {
             else if (!gGame.isOn && cell.isMine) renderCell(i, j, MINE)
         }
     }
-    getSmile()
+    renderLive()
     console.log('you lose')
 }
 // color the mine with red //
 function getMineHTML() {
     return `<span style="background-color: red">${MINE}</span>`
 }
+// show the left lives
+function renderLive() {
 
+    const elLive = document.getElementById('live')
+    if (leftLives == 2) elLive.innerHTML = LIVE_2
+    else if (leftLives == 1) elLive.innerHTML = LIVE_1
+    else elLive.innerHTML = ' '
+}
+//smile face
 function getSmile() {
-    const elSmile = document.querySelector('.image')
+
+    const elSmile = document.getElementById('smile')
     if (isWin) elSmile.innerHTML = WIN
     else if (!gGame.isOn) elSmile.innerHTML = LOSE
     else elSmile.innerHTML = GAME
 }
+//set interval with delay
+function startTimer() {
 
-function getLive() {
-    const elLive = document.querySelector('.live')
-    elLive.innerHTML = LIVE
-
+    gIntervalId = setInterval(updateTimer, 1000)
 }
+//update the timer and show on html
+function updateTimer() {
+
+    var currentTime = Date.now()
+    gElapsedTime = Math.floor((currentTime - gGame.secsPassed) / 1000)
+    var showDisplay = document.getElementById('timer')
+    showDisplay.innerHTML = gElapsedTime
+}
+
 // recurtion neighboar opening //
 function expandShown(board, elCell, i, j) { }
 

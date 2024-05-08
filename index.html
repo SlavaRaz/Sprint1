@@ -17,16 +17,18 @@
         <button onclick="selectLevel('Expert')">Expert</button>
     </div>
     <div class="image">
-        <button onclick="getSmile()">😀</button>
+        <button id="smile" onclick="onInit()">😀</button>
+        <br>
+        <span id="live">❤️❤️❤️</span>
     </div>
-    <div class="live"></div>
     <table class="mine" oncontextmenu="return false;">
         <tbody>
         </tbody>
     </table>
     <div class="game-info">
         <span id="shown-count">0</span> cells shown |
-        <span id="marked-count">0</span> cells marked
+        <span id="marked-count">0</span> 🚩cells marked |
+        <span id="timer">0</span>⏳Seconds
     </div>
     </div>
     <script src="js/game.js"></script>
