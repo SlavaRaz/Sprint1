@@ -9,18 +9,14 @@ const LIVE_3 = '❤️❤️❤️'
 const LIVE_2 = '❤️❤️'
 const LIVE_1 = '❤️'
 const LEVELS = {
-    Beginner: { SIZE: 4, MINES: 2 },
+    Beginner: { SIZE: 4, MINES: 3 },//changed to 3 mines for 3 lives
     Medium: { SIZE: 8, MINES: 14 },
     Expert: { SIZE: 12, MINES: 32 }
 }
 
-var isFirstClick = true
-var isWin = false
 var gBoard
 var gGame
 var gSelectedLevel = 'Beginner'
-var leftLives = 3
-// var gStartTime
 var gIntervalId
 var gElapsedTime = 0
 
@@ -30,27 +26,15 @@ function onInit() {
         isOn: true,
         shownCount: 0,
         markedCount: 0,
-        secsPassed: 0
+        secsPassed: 0,
+        leftLives: 3,
+        isFirstClick: true,
+        isWin: false
     }
     clearInterval(gIntervalId)
-    isFirstClick = true
-    const elSmile = document.getElementById('smile')
-    elSmile.innerHTML = GAME
-    const elLive = document.getElementById('live')
-    elLive.innerHTML = LIVE_3
-    document.getElementById('shown-count').innerHTML = gGame.shownCount
-    document.getElementById('marked-count').innerHTML = gGame.markedCount
-    document.getElementById('timer').innerHTML = gGame.secsPassed
-
+    resetAllCount()
     gBoard = buildBoard(LEVELS[gSelectedLevel])
     renderBoard()
-    //***  if first click  ***/
-    // if (!isFirstClick) {
-    //     placeMinesRandomly(gBoard)
-    //     renderBoard()
-    //     setMinesNegsCount(gBoard)
-    // }
-
 }
 
 // select board size
@@ -61,13 +45,15 @@ function selectLevel(level) {
 // func to check the first click on cell, should not be a mine //
 function firstClick(i, j) {
 
+    const cell = gBoard[i][j]
     // gBoard[1][1].isMine = true
     // gBoard[3][3].isMine = true
     placeMinesRandomly(gBoard, i, j)
+    document.getElementById('marked-count').innerHTML = gGame.markedCount
+    cell.isMarked ? renderCell(i, j, FLAG) : renderCell(i, j, '')
     renderBoard()
     setMinesNegsCount(gBoard)
-    isFirstClick = !isFirstClick
-    console.log(isFirstClick)
+    gGame.isFirstClick = !gGame.isFirstClick
     return
 }
 // build board //
@@ -81,7 +67,8 @@ function buildBoard(gLevel) {
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
-                isMarked: false
+                isMarked: false,
+                isMineClicked: false
             }
         }
     }
@@ -102,9 +89,9 @@ function renderBoard() {
         for (var j = 0; j < gBoard[0].length; j++) {
             const cell = gBoard[i][j]
             const tile = `cell cell-${i}-${j}`
-            const className = `cell cell-${i}-${j}`
+            const className = `cell cell-${i}-${j} `
             strHTML += `\t<td title="${tile}" class="${className}" 
-            onclick="onCellClicked(this, ${i}, ${j})"
+            onclick="onCellClicked( ${i}, ${j})"
             oncontextmenu="onCellMarked(event, ${i}, ${j}); return false">
         </td>\n`
         }
@@ -114,21 +101,24 @@ function renderBoard() {
     elBoard.innerHTML = strHTML
 }
 // handlie click on each cell //
-function onCellClicked(elCell, i, j) {
+function onCellClicked(i, j) {
 
-    if (isFirstClick) {
+    if (gGame.isFirstClick) {
         gGame.secsPassed = Date.now()
         startTimer()
         firstClick(i, j)
     }
     const cell = gBoard[i][j]
     if (gGame.isOn) {
-        if (cell.isMine && !cell.isMarked) {
-            leftLives--
+        if (cell.isMine && !cell.isMarked && !cell.isMineClicked) {
+            cell.isMineClicked = true
+            console.log(cell.isMineClicked)
+            gGame.leftLives--
             gameOver(i, j)
         }
         else {
-            if (!cell.isShown && !cell.isMarked) {
+            if (!cell.isShown && !cell.isMarked && !cell.isMineClicked) {
+                if (cell.minesAroundCount === 0) expandShown(gBoard, i, j)
                 cell.isShown = true
                 gGame.shownCount++
                 checkGameOver()
@@ -141,6 +131,7 @@ function onCellClicked(elCell, i, j) {
 // handle mark the mine with flag //
 function onCellMarked(event, i, j) {
 
+    if (gGame.isFirstClick) firstClick(i, j)
     const cell = gBoard[i][j]
     if (gGame.isOn) {
         event.preventDefault()
@@ -170,7 +161,7 @@ function checkGameOver() {
     }
     if (flaggedMines === minesCount && shownCells === cellsCount - minesCount) {
         console.log('You win!')
-        isWin = true
+        gGame.isWin = true
         getSmile()
         clearInterval(gIntervalId)
         return true
@@ -186,7 +177,8 @@ function renderCell(i, j, value) {
 function gameOver(row, col) {
 
     var clickedMinePos = { row, col }
-    if (leftLives === 0) {
+    console.log(gGame.leftLives)
+    if (gGame.leftLives === 0) {
         gGame.isOn = false
         renderLive()
         getSmile()
@@ -210,15 +202,15 @@ function getMineHTML() {
 function renderLive() {
 
     const elLive = document.getElementById('live')
-    if (leftLives == 2) elLive.innerHTML = LIVE_2
-    else if (leftLives == 1) elLive.innerHTML = LIVE_1
+    if (gGame.leftLives == 2) elLive.innerHTML = LIVE_2
+    else if (gGame.leftLives == 1) elLive.innerHTML = LIVE_1
     else elLive.innerHTML = ' '
 }
 //smile face
 function getSmile() {
 
     const elSmile = document.getElementById('smile')
-    if (isWin) elSmile.innerHTML = WIN
+    if (gGame.isWin) elSmile.innerHTML = WIN
     else if (!gGame.isOn) elSmile.innerHTML = LOSE
     else elSmile.innerHTML = GAME
 }
@@ -236,7 +228,16 @@ function updateTimer() {
     showDisplay.innerHTML = gElapsedTime
 }
 
-// recurtion neighboar opening //
-function expandShown(board, elCell, i, j) { }
+function resetAllCount() {
+
+    const elSmile = document.getElementById('smile')
+    elSmile.innerHTML = GAME
+    const elLive = document.getElementById('live')
+    elLive.innerHTML = LIVE_3
+    document.getElementById('shown-count').innerHTML = gGame.shownCount
+    document.getElementById('marked-count').innerHTML = gGame.markedCount
+    document.getElementById('timer').innerHTML = gGame.secsPassed
+}
+
 
 

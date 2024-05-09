@@ -1,13 +1,13 @@
 'use strict'
 
 function placeMinesRandomly(board, firstClickRow, firstClickCol) {
-    // const size = board.length
+
     const totalMines = LEVELS[gSelectedLevel].MINES
     var randomCell = LEVELS[gSelectedLevel].SIZE - 1
     let minesPlaced = 0
     while (minesPlaced < totalMines) {
-        const randomRow = getRandomIntInclusive(0,randomCell)
-        const randomCol = getRandomIntInclusive(0,randomCell)
+        const randomRow = getRandomIntInclusive(0, randomCell)
+        const randomCol = getRandomIntInclusive(0, randomCell)
         if (!board[randomRow][randomCol].isMine &&
             !(randomRow >= firstClickRow - 1 && randomRow <= firstClickRow + 1 &&
                 randomCol >= firstClickCol - 1 && randomCol <= firstClickCol + 1)) {
@@ -18,10 +18,12 @@ function placeMinesRandomly(board, firstClickRow, firstClickCol) {
 }
 
 function getRandomIntInclusive(min, max) {
+
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 function setMinesNegsCount(board) {
+
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
             // Skip calculation for cells that contain mines
@@ -36,6 +38,7 @@ function setMinesNegsCount(board) {
 }
 
 function countNeighborMines(board, row, col) {
+
     var count = 0
     for (var i = row - 1; i <= row + 1; i++) {
         for (var j = col - 1; j <= col + 1; j++) {
@@ -47,9 +50,25 @@ function countNeighborMines(board, row, col) {
     return count
 }
 
-// function shuffle(array) {
-//     for (let i = array.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1))
-//         [array[i], array[j]] = [array[j], array[i]]
-//     }
-// }
+// recurtion neighboar opening //
+function expandShown(board, row, col) {
+
+    for (var i = row - 1; i <= row + 1; i++) {
+        for (var j = col - 1; j <= col + 1; j++) {
+            if (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
+                const cell = board[i][j]
+                if (!cell.isShown && !cell.isMarked) {
+                    cell.isShown = true
+                    gGame.shownCount++
+                    document.getElementById('shown-count').innerHTML = gGame.shownCount
+                    renderCell(i, j, cell.minesAroundCount)
+                    if (cell.minesAroundCount === 0) {
+                        expandShown(board, i, j)
+                    }
+                    const elCell = document.querySelector(`.cell-${i}-${j}`)
+                    elCell.classList.add('expanded')
+                }
+            }
+        }
+    }
+}

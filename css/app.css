@@ -29,10 +29,30 @@ h1 {
   text-align: center;
   font-size: 40px;
   margin-bottom: 20px;
+  border: none;
 }
 
 #live {
   font-size: 30px;
+}
+
+#light1 {
+  background-color: grey;
+  font-size: 30px;
+  border: none;
+}
+
+#light2 {
+  background-color: grey;
+  font-size: 30px;
+  border: none;
+}
+
+#light3 {
+  background-color: grey;
+  font-size: 30px;
+  border: none;
+
 }
 
 .options button {
@@ -61,12 +81,17 @@ h1 {
   border: 5px solid #ddd;
   cursor: pointer;
   text-align: center;
-  background-color: #3ea2e0;
+  background-color: #007bff;
   font-size: 25px;
 }
 
 .cell:hover {
   background-color: #f0f0f0;
+}
+
+.expanded {
+  background-color: darkgray;
+  border: 1px solid gray;
 }
 
 .game-info {
@@ -76,5 +101,4 @@ h1 {
   color: #333;
   margin-top: 2%;
   background-color: lightblue
-
 }
