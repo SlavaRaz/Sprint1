@@ -1,5 +1,6 @@
 'use strict'
 
+
 function placeMinesRandomly(board, firstClickRow, firstClickCol) {
 
     const totalMines = LEVELS[gSelectedLevel].MINES
@@ -59,6 +60,7 @@ function expandShown(board, row, col) {
                 const cell = board[i][j]
                 if (!cell.isShown && !cell.isMarked) {
                     cell.isShown = true
+                    cell.isExpandShown = true
                     gGame.shownCount++
                     document.getElementById('shown-count').innerHTML = gGame.shownCount
                     renderCell(i, j, cell.minesAroundCount)
@@ -72,3 +74,44 @@ function expandShown(board, row, col) {
         }
     }
 }
+
+//unrevealed the cells
+function revealCells(board, row, col) {
+
+    for (var i = row - 1; i <= row + 1; i++) {
+        for (var j = col - 1; j <= col + 1; j++) {
+            if (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
+                const cell = board[i][j]
+                if (!cell.isShown && !cell.isMarked && !cell.isExpandShown) {
+                    cell.isShown = true
+                    gGame.shownCount++
+                    document.getElementById('shown-count').innerHTML = gGame.shownCount
+                    console.log(cell.minesAroundCount)
+                    cell.isMine ? renderCell(i, j, MINE) : renderCell(i, j, cell.minesAroundCount)
+                    const elCell = document.querySelector(`.cell-${i}-${j}`)
+                    elCell.classList.add('expanded')
+                }
+            }
+        }
+    }
+}
+//revealed the cells 
+function hideCells(board, row, col) {
+
+    for (var i = row - 1; i <= row + 1; i++) {
+        for (var j = col - 1; j <= col + 1; j++) {
+            if (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
+                const cell = board[i][j]
+                if (cell.isShown && !cell.isMarked && !cell.isExpandShown) {
+                    cell.isShown = false
+                    gGame.shownCount--
+                    document.getElementById('shown-count').innerHTML = gGame.shownCount
+                    renderCell(i, j, '')
+                    const elCell = document.querySelector(`.cell-${i}-${j}`)
+                    elCell.classList.remove('expanded')
+                }
+            }
+        }
+    }
+}
+

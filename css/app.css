@@ -38,36 +38,21 @@ h1 {
 
 #light1 {
   background-color: grey;
-  font-size: 30px;
+  font-size: 25px;
   border: none;
 }
 
 #light2 {
   background-color: grey;
-  font-size: 30px;
+  font-size: 25px;
   border: none;
 }
 
 #light3 {
   background-color: grey;
-  font-size: 30px;
+  font-size: 25px;
   border: none;
 
-}
-
-.options button {
-  padding: 10px 20px;
-  font-size: 16px;
-  margin: 0 5px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.options button:hover {
-  background-color: #0056b3;
 }
 
 .mine {
@@ -101,4 +86,36 @@ h1 {
   color: #333;
   margin-top: 2%;
   background-color: lightblue
+}
+
+#safe-clicks-count {
+  padding: 10px 10px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.controls {
+  text-align: center;
+  margin-top: 2%;
+
+}
+
+.best-score {
+  margin-bottom: 10px;
 }

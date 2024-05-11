@@ -13,7 +13,12 @@ const LEVELS = {
     Medium: { SIZE: 8, MINES: 14 },
     Expert: { SIZE: 12, MINES: 32 }
 }
+var gHint = {
+    isHint1: false,
+    isHint2: false,
+    isHint3: false
 
+}
 var gBoard
 var gGame
 var gSelectedLevel = 'Beginner'
@@ -68,7 +73,8 @@ function buildBoard(gLevel) {
                 isShown: false,
                 isMine: false,
                 isMarked: false,
-                isMineClicked: false
+                isMineClicked: false,
+                isExpandShown: false
             }
         }
     }
@@ -108,6 +114,9 @@ function onCellClicked(i, j) {
         startTimer()
         firstClick(i, j)
     }
+    if (gHint.isHint1) isLight1(i, j)
+    else if (gHint.isHint2) isLight2(i, j)
+    else if (gHint.isHint3) isLight3(i, j)
     const cell = gBoard[i][j]
     if (gGame.isOn) {
         if (cell.isMine && !cell.isMarked && !cell.isMineClicked) {
@@ -118,8 +127,8 @@ function onCellClicked(i, j) {
         }
         else {
             if (!cell.isShown && !cell.isMarked && !cell.isMineClicked) {
-                if (cell.minesAroundCount === 0) expandShown(gBoard, i, j)
                 cell.isShown = true
+                if (cell.minesAroundCount === 0) expandShown(gBoard, i, j)
                 gGame.shownCount++
                 checkGameOver()
                 document.getElementById('shown-count').innerHTML = gGame.shownCount
@@ -172,6 +181,7 @@ function renderCell(i, j, value) {
     // Select the elCell and set the value
     const elCell = document.querySelector(`.cell-${i}-${j}`)
     elCell.innerHTML = value
+    elCell.classList.add('expanded')
 }
 // game over when click on mine //
 function gameOver(row, col) {
@@ -227,7 +237,7 @@ function updateTimer() {
     var showDisplay = document.getElementById('timer')
     showDisplay.innerHTML = gElapsedTime
 }
-
+//oninit start and reset all count 
 function resetAllCount() {
 
     const elSmile = document.getElementById('smile')
@@ -238,6 +248,52 @@ function resetAllCount() {
     document.getElementById('marked-count').innerHTML = gGame.markedCount
     document.getElementById('timer').innerHTML = gGame.secsPassed
 }
+//light hist 1
+function isLight1(i, j) {
+
+    gHint.isHint1 = true
+    const elLight = document.getElementById('light1')
+    elLight.style.backgroundColor = "orange"
+    revealCells(gBoard, i, j)
+    setTimeout(function () {
+        hideCells(gBoard, i, j)
+        setTimeout(function () {
+            gHint.isHint1 = false
+            elLight.style.display = 'none'
+        }, 3000)
+    }, 1000)
+}
+//light hist 2
+function isLight2(i, j) {
+
+    gHint.isHint2 = true
+    const elLight = document.getElementById('light2')
+    elLight.style.backgroundColor = "orange"
+    revealCells(gBoard, i, j)
+    setTimeout(function () {
+        hideCells(gBoard, i, j)
+        setTimeout(function () {
+            gHint.isHint2 = false
+            elLight.style.display = 'none'
+        }, 3000)
+    }, 1000)
+}
+//light hist 3
+function isLight3(i, j) {
+
+    gHint.isHint3 = true
+    const elLight = document.getElementById('light3')
+    elLight.style.backgroundColor = "orange"
+    revealCells(gBoard, i, j)
+    setTimeout(function () {
+        hideCells(gBoard, i, j)
+        setTimeout(function () {
+            gHint.isHint3 = false
+            elLight.style.display = 'none'
+        }, 3000)
+    }, 1000)
+}
+
 
 
 

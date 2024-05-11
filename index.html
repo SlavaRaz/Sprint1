@@ -20,14 +20,18 @@
         <button id="smile" onclick="onInit()">😀</button>
         <br>
         <span id="live">❤️❤️❤️</span>
-        <!-- <button id="light1" onclick="isHint1()">💡</button>
-        <button id="light2" onclick="isHint2()">💡</button>
-        <button id="light3" onclick="isHint3()">💡</button> -->
+        <button id="light1" onclick="isLight1()">💡</button>
+        <button id="light2" onclick="isLight2()">💡</button>
+        <button id="light3" onclick="isLight3()">💡</button>
     </div>
     <table class="mine" oncontextmenu="return false;">
         <tbody>
         </tbody>
     </table>
+    <div class="controls">
+        <button onclick="handleSafeClick()">Safe-Click</button>
+        <span id="safe-clicks-count">3</span> 👆 Clicks Available
+    </div>
     <div class="game-info">
         <span id="shown-count">0</span> cells shown |
         <span id="marked-count">0</span> 🚩cells marked |
@@ -36,6 +40,7 @@
     </div>
     <script src="js/game.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/bonus.js"></script>
 
 </body>
 
